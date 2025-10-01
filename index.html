@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Loading Scrapbook</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #fdf6f0;
+      font-family: 'Comic Sans MS', cursive;
+      overflow: hidden;
+      flex-direction: column;
+      position: relative;
+    }
+    .loader {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      width: 300px;
+    }
+    .loading-text {
+      margin-top: 20px;
+      font-size: 20px;
+      color: #444;
+    }
+    .emoji {
+      font-size: 50px;
+      animation: bounce 1s infinite;
+      cursor: default;
+      user-select: none;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    .progress {
+      margin-top: 20px;
+      height: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    #progressBar {
+      background-color: #ffc107;
+    }
+    .name {
+      margin: 20px 0 0 0;
+      font-size: 28px;
+      font-weight: bold;
+      color: #b38600;
+      font-family: 'Comic Sans MS', cursive;
+      letter-spacing: 2px;
+    }
+    #falling-food-container {
+      pointer-events: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 1;
+      overflow: hidden;
+      user-select: none;
+    }
+    .falling-food {
+      position: absolute;
+      top: -50px;
+      font-size: 24px;
+      opacity: 0.8;
+      animation-name: fall;
+      animation-timing-function: linear;
+      animation-iteration-count: 1;
+      animation-fill-mode: forwards;
+      user-select: none;
+    }
+    @keyframes fall {
+      to {
+        transform: translateY(110vh);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="falling-food-container"></div>
+  <div class="loader">
+    <div class="emoji" id="emoji">🍕</div>
+    <div class="loading-text">Membuka penjualan Yosia...</div>
+    <div class="progress w-75 mx-auto">
+      <div id="progressBar" 
+           class="progress-bar progress-bar-striped progress-bar-animated" 
+           role="progressbar" style="width: 0%">0%</div>
+    </div>
+    <div class="name">Yosia Edmund Herlianto</div>
+  </div>
+  <script>
+    const foodIcons = ['🍕', '🍔', '🍣', '🍩', '🍎'];
+    const emoji = document.getElementById('emoji');
+    const fallingContainer = document.getElementById('falling-food-container');
+
+    let iconIndex = 0;
+    setInterval(() => {
+      iconIndex = (iconIndex + 1) % foodIcons.length;
+      emoji.textContent = foodIcons[iconIndex];
+    }, 1000);
+
+    let progress = 0;
+    const progressBar = document.getElementById("progressBar");
+    const duration = 5000; 
+    const interval = 150;
+    const step = 100 / (duration / interval);
+
+    const timer = setInterval(() => {
+      progress += step;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(timer);
+        window.location.href = "https://lemong-22.github.io/School_stuff/";
+      }
+      progressBar.style.width = progress + "%";
+      progressBar.innerText = Math.floor(progress) + "%";
+    }, interval);
+
+    function spawnFallingFood() {
+      const food = document.createElement('div');
+      food.classList.add('falling-food');
+      const icon = foodIcons[Math.floor(Math.random() * foodIcons.length)];
+      food.textContent = icon;
+      food.style.left = Math.random() * 100 + "vw";
+      food.style.fontSize = (20 + Math.random() * 20) + "px";
+      const durationFall = 4 + Math.random() * 3;
+      food.style.animationDuration = durationFall + "s";
+      fallingContainer.appendChild(food);
+      food.addEventListener('animationend', () => {
+        food.remove();
+      });
+    }
+
+    setInterval(spawnFallingFood, 300);
+  </script>
+</body>
+</html>
